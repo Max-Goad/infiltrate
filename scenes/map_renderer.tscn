@@ -1,0 +1,37 @@
+[gd_scene load_steps=7 format=3 uid="uid://sh3yljpf73t7"]
+
+[ext_resource type="Shader" path="res://resources/masked_texture.gdshader" id="1_1fnjm"]
+[ext_resource type="Script" path="res://scripts/map_renderer.gd" id="1_1u0w6"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_djdf3"]
+viewport_path = NodePath("Mask")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qu4h7"]
+resource_local_to_scene = true
+shader = ExtResource("1_1fnjm")
+shader_parameter/mask_texture = SubResource("ViewportTexture_djdf3")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_hnuol"]
+viewport_path = NodePath("Overlay")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_8nge6"]
+viewport_path = NodePath("Mask")
+
+[node name="MapRenderer" type="Node2D"]
+script = ExtResource("1_1u0w6")
+
+[node name="Render" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_qu4h7")
+position = Vector2(640, 360)
+texture = SubResource("ViewportTexture_hnuol")
+
+[node name="Mask Debug" type="Sprite2D" parent="."]
+position = Vector2(70, 40)
+scale = Vector2(0.1, 0.1)
+texture = SubResource("ViewportTexture_8nge6")
+
+[node name="Overlay" type="SubViewport" parent="."]
+size = Vector2i(1280, 720)
+
+[node name="Mask" type="SubViewport" parent="."]
+size = Vector2i(1280, 720)
