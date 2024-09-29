@@ -36,6 +36,9 @@ func _process(_delta: float) -> void:
 func update_map(map: Map):
 	self.map = map
 	_update_bound()
+
+func get_centered_position() -> Vector2:
+	return get_viewport_rect().size / 2
 #endregion
 
 #region Private Functions

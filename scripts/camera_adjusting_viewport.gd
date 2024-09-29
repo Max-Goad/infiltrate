@@ -1,10 +1,10 @@
 class_name CameraAdjustingViewport extends SubViewport
 
 #region Variables
-
-@onready var map_objects: Node2D = $"Map Objects"
 var camera: MapBoundedFollowCamera
-var player_light: VisibilityLight
+var camera_size: Vector2
+var map_layers: Array[TileMapLayer]
+var lights: Array[VisibilityLight]
 #endregion
 
 #region Signals
@@ -12,27 +12,28 @@ var player_light: VisibilityLight
 
 #region Engine Functions
 func _ready() -> void:
-	#assert(camera)
-	pass
-
-func _process(_delta: float) -> void:
-	if camera:
-		var target_position = -camera.get_screen_center_position() + (camera.get_viewport_rect().size / 2)
-		map_objects.global_position = target_position
-		if player_light:
-			player_light.global_position = target_position + player_light.component.global_position
+	self.size = get_window().size
 #endregion
 
 #region Public Functions
 func register_camera(camera: MapBoundedFollowCamera):
 	self.camera = camera
 
-func register_map_object(node: Node2D):
-	map_objects.add_child(node)
+func register_map_layer(layer: TileMapLayer):
+	map_layers.push_back(layer)
+	add_child(layer)
 
-func register_player_light(light: VisibilityLight):
-	self.player_light = light
+func register_light(light: VisibilityLight):
+	lights.push_back(light)
 	add_child(light)
+
+func update():
+	assert(camera)
+	var target_position = -camera.get_screen_center_position() + camera.get_centered_position()
+	for layer in map_layers:
+		layer.global_position = target_position
+	for light in lights:
+		light.update_position(target_position)
 #endregion
 
 #region Private Functions

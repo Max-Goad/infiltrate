@@ -1,14 +1,13 @@
 class_name MapRenderer extends Node2D
 
 const MASK_MATERIAL: Material = preload("res://resources/shaders/all_white.tres")
-const VISIBILITY_LIGHT = preload("res://scenes/visibility_light.tscn")
 
 #region Variables
 @export var map: Map
-@export var camera: Camera2D
+@export var camera: MapBoundedFollowCamera
 
-## These components are used to generate lights, which will
-## "cut a hole" through the overlay (via the mask).
+## Light components are used to generate lights, which
+## cut holes through the overlay (via the mask).
 @export var light_components: Array[LightComponent] = []
 
 ## The overlay is the faded portion of the map which is displayed
@@ -19,7 +18,9 @@ const VISIBILITY_LIGHT = preload("res://scenes/visibility_light.tscn")
 @onready var mask: CameraAdjustingViewport = $Mask
 
 @onready var render: Sprite2D = $Render
-@onready var mask_debug: Sprite2D = $"Mask Debug"
+
+@export var show_debug_mask := true
+@onready var mask_debug_display: Sprite2D = $"Mask Debug Display"
 #endregion
 
 #region Signals
@@ -32,29 +33,29 @@ func _ready() -> void:
 	overlay.register_camera(camera)
 	mask.register_camera(camera)
 	for layer in map.layers:
-		overlay.register_map_object(to_overlay(layer.duplicate()))
-		mask.register_map_object(apply_mask_shader(layer.duplicate()))
+		overlay.register_map_layer(_apply_overlay_adjustments(layer.duplicate()))
+		mask.register_map_layer(_apply_mask_shader(layer.duplicate()))
 	for component in light_components:
-		mask.register_player_light(generate_light(component))
+		mask.register_light(component.generate_light())
+	render.offset = camera.get_centered_position()
+	mask_debug_display.offset = camera.get_centered_position()
+	mask_debug_display.visible = show_debug_mask
 	self.show()
+
+func _process(_delta: float) -> void:
+	overlay.update()
+	mask.update()
 #endregion
 
 #region Public Functions
 #endregion
 
 #region Private Functions
-func to_overlay(layer: TileMapLayer) -> TileMapLayer:
+func _apply_overlay_adjustments(layer: TileMapLayer) -> TileMapLayer:
 	layer.modulate.v = 0.2
 	return layer
 
-func apply_mask_shader(layer: TileMapLayer) -> TileMapLayer:
+func _apply_mask_shader(layer: TileMapLayer) -> TileMapLayer:
 	layer.material = MASK_MATERIAL
 	return layer
-
-func generate_light(component: LightComponent) -> VisibilityLight:
-	var new_light: VisibilityLight = VISIBILITY_LIGHT.instantiate()
-	new_light.component = component
-	new_light.texture_scale = component.intensity
-	return new_light
-
 #endregion

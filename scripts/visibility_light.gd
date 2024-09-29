@@ -1,17 +1,10 @@
 class_name VisibilityLight extends PointLight2D
 
-#region Variables
-@export var component: LightComponent
-#endregion
+var component: LightComponent
 
-#region Signals
-#endregion
-
-#region Engine Functions
-#endregion
-
-#region Public Functions
-#endregion
-
-#region Private Functions
-#endregion
+func update_position(target_position: Vector2) -> void:
+	match component.relativity:
+		LightComponent.Relativity.WORLD_RELATIVE:
+			self.global_position = target_position
+		LightComponent.Relativity.CAMERA_RELATIVE:
+			self.global_position = target_position + component.global_position

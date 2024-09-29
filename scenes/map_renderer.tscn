@@ -23,22 +23,17 @@ script = ExtResource("1_1u0w6")
 
 [node name="Render" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_qu4h7")
-position = Vector2(640, 360)
 texture = SubResource("ViewportTexture_hnuol")
 
-[node name="Mask Debug" type="Sprite2D" parent="."]
-position = Vector2(70, 40)
-scale = Vector2(0.1, 0.1)
+[node name="Mask Debug Display" type="Sprite2D" parent="."]
+visible = false
+scale = Vector2(0.2, 0.2)
 texture = SubResource("ViewportTexture_8nge6")
 
 [node name="Overlay" type="SubViewport" parent="."]
 size = Vector2i(1280, 720)
 script = ExtResource("3_piwvl")
 
-[node name="Map Objects" type="Node2D" parent="Overlay"]
-
 [node name="Mask" type="SubViewport" parent="."]
 size = Vector2i(1280, 720)
 script = ExtResource("3_piwvl")
-
-[node name="Map Objects" type="Node2D" parent="Mask"]
