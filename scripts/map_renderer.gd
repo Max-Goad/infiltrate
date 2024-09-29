@@ -5,16 +5,21 @@ const VISIBILITY_LIGHT = preload("res://scenes/visibility_light.tscn")
 
 #region Variables
 @export var map: Map
+@export var camera: Camera2D
+
 ## These components are used to generate lights, which will
 ## "cut a hole" through the overlay (via the mask).
 @export var light_components: Array[LightComponent] = []
 
 ## The overlay is the faded portion of the map which is displayed
 ## over top of everything else when no there is no vision.
-@onready var overlay: SubViewport = $Overlay
+@onready var overlay: CameraAdjustingViewport = $Overlay
 ## The mask "cuts a hole" through the overlay (using lights)
 ## in order to reveal the real map below it.
-@onready var mask: SubViewport = $Mask
+@onready var mask: CameraAdjustingViewport = $Mask
+
+@onready var render: Sprite2D = $Render
+@onready var mask_debug: Sprite2D = $"Mask Debug"
 #endregion
 
 #region Signals
@@ -23,11 +28,14 @@ const VISIBILITY_LIGHT = preload("res://scenes/visibility_light.tscn")
 #region Engine Functions
 func _ready() -> void:
 	assert(map)
+	assert(camera)
+	overlay.register_camera(camera)
+	mask.register_camera(camera)
 	for layer in map.layers:
-		overlay.add_child(to_overlay(layer.duplicate()))
-		mask.add_child(apply_mask_shader(layer.duplicate()))
+		overlay.register_map_object(to_overlay(layer.duplicate()))
+		mask.register_map_object(apply_mask_shader(layer.duplicate()))
 	for component in light_components:
-		mask.add_child(generate_light(component))
+		mask.register_player_light(generate_light(component))
 	self.show()
 #endregion
 
@@ -45,7 +53,7 @@ func apply_mask_shader(layer: TileMapLayer) -> TileMapLayer:
 
 func generate_light(component: LightComponent) -> VisibilityLight:
 	var new_light: VisibilityLight = VISIBILITY_LIGHT.instantiate()
-	new_light.parent = component
+	new_light.component = component
 	new_light.texture_scale = component.intensity
 	return new_light
 
