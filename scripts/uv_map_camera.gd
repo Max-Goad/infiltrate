@@ -10,3 +10,4 @@ func _process(_delta: float) -> void:
 	# the "position" of the camera continues to increment/decrement even
 	# when it is stopped by the specified bound limits.
 	self.global_position = reference.get_screen_center_position()
+	#self.global_position = reference.global_position

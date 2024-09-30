@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://sh3yljpf73t7"]
 
 [ext_resource type="Shader" path="res://resources/masked_texture.gdshader" id="1_1fnjm"]
-[ext_resource type="Script" path="res://scripts/map_renderer.gd" id="1_1u0w6"]
+[ext_resource type="Script" path="res://scripts/uv_map_renderer.gd" id="1_1u0w6"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_djdf3"]
 viewport_path = NodePath("Mask")

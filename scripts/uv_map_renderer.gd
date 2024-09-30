@@ -1,4 +1,4 @@
-class_name MapRenderer extends Node2D
+class_name UVMapRenderer extends Node2D
 
 const MASK_MATERIAL: Material = preload("res://resources/shaders/all_white.tres")
 
@@ -8,7 +8,13 @@ const MASK_MATERIAL: Material = preload("res://resources/shaders/all_white.tres"
 
 ## Light components are used to generate lights, which
 ## cut holes through the overlay (via the mask).
-@export var light_components: Array[LightComponent] = []
+@export var lights: Array[LightComponent] = []
+
+## Additional non-map occluders which are added to the mask layer.
+@export var occluders: Array[LightOccluder2D] = []
+
+## Sprites which should appear on the map overlay.
+@export var overlay_sprites: Array[Sprite2D] = []
 
 ## The overlay is the faded portion of the map which is displayed
 ## over top of everything else when no there is no vision.
@@ -30,16 +36,22 @@ const MASK_MATERIAL: Material = preload("res://resources/shaders/all_white.tres"
 func _ready() -> void:
 	assert(map)
 	assert(camera)
-	assert(len(light_components) > 0)
+	assert(len(lights) > 0)
 
 	overlay.add_child(UVMapCamera.new(camera))
 	mask.add_child(UVMapCamera.new(camera))
 	for ref_layer in map.layers:
-		overlay.add_child(UVMapLayer.generate_overlay(ref_layer))
-		mask.add_child(UVMapLayer.generate_mask(ref_layer))
-	for ref_comp in light_components:
+		overlay.add_child(as_overlay(UVMapLayer.new(ref_layer)))
+		mask.add_child(as_mask(UVMapLayer.new(ref_layer)))
+	for ref_comp in lights:
 		# Only add the lights to the mask; the actual lights will exist in the real map
 		mask.add_child(UVMapLight.generate(ref_comp))
+
+	# TODO: How do we handle replication of data between the originals and these copies?
+	for sprite in overlay_sprites:
+		overlay.add_child(as_overlay(sprite.duplicate()))
+	for occluder in occluders:
+		mask.add_child(as_mask(occluder.duplicate()))
 
 	render.offset = camera.screen_center()
 	mask_debug_display.offset = camera.screen_center()
@@ -51,4 +63,11 @@ func _ready() -> void:
 #endregion
 
 #region Private Functions
+func as_overlay(node):
+	node.modulate.v = 0.2
+	return node
+
+func as_mask(node):
+	node.material = MASK_MATERIAL
+	return node
 #endregion

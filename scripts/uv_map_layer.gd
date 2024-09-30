@@ -1,13 +1,12 @@
 class_name UVMapLayer extends TileMapLayer
 
-const MASK_MATERIAL: Material = preload("res://resources/shaders/all_white.tres")
+var reference: TileMapLayer
 
-static func generate_overlay(reference: TileMapLayer) -> UVMapLayer:
-	var uv_map_layer: TileMapLayer = reference.duplicate()
-	uv_map_layer.modulate.v = 0.2
-	return uv_map_layer
+func _init(reference: TileMapLayer) -> void:
+	self.reference = reference
+	on_reference_updated()
 
-static func generate_mask(reference: TileMapLayer) -> UVMapLayer:
-	var uv_map_layer: TileMapLayer = reference.duplicate()
-	uv_map_layer.material = MASK_MATERIAL
-	return uv_map_layer
+func on_reference_updated():
+	self.global_transform = reference.global_transform
+	self.tile_set = reference.tile_set
+	self.tile_map_data = reference.tile_map_data
