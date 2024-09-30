@@ -61,7 +61,6 @@ texture = SubResource("AtlasTexture_nhd8h")
 
 [node name="LightComponent" type="Node2D" parent="Test Static Light"]
 script = ExtResource("7_8fgcr")
-relativity = 1
 
 [node name="Player" type="CharacterBody2D" parent="."]
 position = Vector2(198, 557)
@@ -85,7 +84,6 @@ deceleration = 0.1
 
 [node name="LightComponent" type="Node2D" parent="Player"]
 script = ExtResource("7_8fgcr")
-relativity = 1
 
 [node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("map", "follow")]
 script = ExtResource("9_36oxv")

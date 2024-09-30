@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://c1ont37t30mn7"]
 
-[ext_resource type="Script" path="res://scripts/visibility_light.gd" id="1_m00vt"]
+[ext_resource type="Script" path="res://scripts/uv_map_light.gd" id="1_g44fe"]
 
 [sub_resource type="Gradient" id="Gradient_evf6e"]
 interpolation_color_space = 2
@@ -20,4 +20,4 @@ shadow_enabled = true
 shadow_filter = 1
 texture = SubResource("GradientTexture2D_rf2tg")
 texture_scale = 2.0
-script = ExtResource("1_m00vt")
+script = ExtResource("1_g44fe")

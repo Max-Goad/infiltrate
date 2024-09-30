@@ -28,8 +28,6 @@ func _process(_delta: float) -> void:
 			_update_rotation()
 			_update_bound()
 		scene_camera.position = follow.position
-
-	self.drag_vertical_offset
 #endregion
 
 #region Public Functions
@@ -37,8 +35,8 @@ func update_map(map: Map):
 	self.map = map
 	_update_bound()
 
-func get_centered_position() -> Vector2:
-	return get_viewport_rect().size / 2
+func screen_center() -> Vector2:
+	return get_window().size / 2
 #endregion
 
 #region Private Functions

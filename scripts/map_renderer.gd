@@ -12,10 +12,10 @@ const MASK_MATERIAL: Material = preload("res://resources/shaders/all_white.tres"
 
 ## The overlay is the faded portion of the map which is displayed
 ## over top of everything else when no there is no vision.
-@onready var overlay: CameraAdjustingViewport = $Overlay
+@onready var overlay: SubViewport = $Overlay
 ## The mask "cuts a hole" through the overlay (using lights)
 ## in order to reveal the real map below it.
-@onready var mask: CameraAdjustingViewport = $Mask
+@onready var mask: SubViewport = $Mask
 
 @onready var render: Sprite2D = $Render
 
@@ -30,32 +30,25 @@ const MASK_MATERIAL: Material = preload("res://resources/shaders/all_white.tres"
 func _ready() -> void:
 	assert(map)
 	assert(camera)
-	overlay.register_camera(camera)
-	mask.register_camera(camera)
-	for layer in map.layers:
-		overlay.register_map_layer(_apply_overlay_adjustments(layer.duplicate()))
-		mask.register_map_layer(_apply_mask_shader(layer.duplicate()))
-	for component in light_components:
-		mask.register_light(component.generate_light())
-	render.offset = camera.get_centered_position()
-	mask_debug_display.offset = camera.get_centered_position()
+	assert(len(light_components) > 0)
+
+	overlay.add_child(UVMapCamera.new(camera))
+	mask.add_child(UVMapCamera.new(camera))
+	for ref_layer in map.layers:
+		overlay.add_child(UVMapLayer.generate_overlay(ref_layer))
+		mask.add_child(UVMapLayer.generate_mask(ref_layer))
+	for ref_comp in light_components:
+		# Only add the lights to the mask; the actual lights will exist in the real map
+		mask.add_child(UVMapLight.generate(ref_comp))
+
+	render.offset = camera.screen_center()
+	mask_debug_display.offset = camera.screen_center()
 	mask_debug_display.visible = show_debug_mask
 	self.show()
-
-func _process(_delta: float) -> void:
-	overlay.update()
-	mask.update()
 #endregion
 
 #region Public Functions
 #endregion
 
 #region Private Functions
-func _apply_overlay_adjustments(layer: TileMapLayer) -> TileMapLayer:
-	layer.modulate.v = 0.2
-	return layer
-
-func _apply_mask_shader(layer: TileMapLayer) -> TileMapLayer:
-	layer.material = MASK_MATERIAL
-	return layer
 #endregion

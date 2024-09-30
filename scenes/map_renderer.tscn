@@ -1,8 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://sh3yljpf73t7"]
+[gd_scene load_steps=7 format=3 uid="uid://sh3yljpf73t7"]
 
 [ext_resource type="Shader" path="res://resources/masked_texture.gdshader" id="1_1fnjm"]
 [ext_resource type="Script" path="res://scripts/map_renderer.gd" id="1_1u0w6"]
-[ext_resource type="Script" path="res://scripts/camera_adjusting_viewport.gd" id="3_piwvl"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_djdf3"]
 viewport_path = NodePath("Mask")
@@ -32,8 +31,6 @@ texture = SubResource("ViewportTexture_8nge6")
 
 [node name="Overlay" type="SubViewport" parent="."]
 size = Vector2i(1280, 720)
-script = ExtResource("3_piwvl")
 
 [node name="Mask" type="SubViewport" parent="."]
 size = Vector2i(1280, 720)
-script = ExtResource("3_piwvl")
