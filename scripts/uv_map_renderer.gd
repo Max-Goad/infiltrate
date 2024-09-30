@@ -48,6 +48,7 @@ func _ready() -> void:
 		mask.add_child(UVMapLight.generate(ref_comp))
 
 	# TODO: How do we handle replication of data between the originals and these copies?
+	# TODO: Fix global position replication
 	for sprite in overlay_sprites:
 		overlay.add_child(as_overlay(sprite.duplicate()))
 	for occluder in occluders:
