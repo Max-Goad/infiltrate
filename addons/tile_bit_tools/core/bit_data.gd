@@ -21,7 +21,6 @@ const NULL_TERRAIN_SET := -1
 const NULL_TERRAIN_MODE := -1
 const DEFAULT_PROBABILITY := 1.0
 const COLLISION_POLYGON_LAYER := 0
-const OCCLUSION_POLYGON_LAYER := 0
 
 const BitData := preload("res://addons/tile_bit_tools/core/bit_data.gd")
 
@@ -51,7 +50,7 @@ var CellNeighborsByMode := {
 }
 
 
-enum _TileKeys {TERRAIN, PEERING_BITS, PROBABILITY, COLLISION_POLYGONS, OCCLUSION_POLYGONS}
+enum _TileKeys {TERRAIN, PEERING_BITS, PROBABILITY, COLLISION_POLYGONS, OCCLUSION}
 
 
 # _tiles[coords : Vector2i][_TileKey]
@@ -59,7 +58,7 @@ enum _TileKeys {TERRAIN, PEERING_BITS, PROBABILITY, COLLISION_POLYGONS, OCCLUSIO
 # PEERING_BITS = Dictionary of {CellNeighbors : terrain_index}
 # PROBABILITY = float
 # COLLISION_POLYGONS = Array[PackedVector2Array]
-# OCCLUSION_POLYGONS = Array[PackedVector2Array]
+# OCCLUSION = OccluderPolygon2D
 @export var _tiles := {}
 
 @export var terrain_set := NULL_TERRAIN_SET
@@ -180,18 +179,11 @@ func get_collision_polygons(coords : Vector2i) -> Array[PackedVector2Array]:
 	return _tiles[coords][_TileKeys.COLLISION_POLYGONS]
 
 
-func extract_occlusion_polygon_points(tile_data : TileData) -> Array[PackedVector2Array]:
-	var polygon_points : Array[PackedVector2Array] = []
-	for polygon_index in tile_data.get_occlusion_polygons_count(OCCLUSION_POLYGON_LAYER):
-		polygon_points.push_back(tile_data.get_occlusion_polygon_points(OCCLUSION_POLYGON_LAYER, polygon_index))
-	return polygon_points
+func set_occluder(coords : Vector2i, occluder : OccluderPolygon2D):
+	_tiles[coords][_TileKeys.OCCLUSION] = occluder
 
-func set_occlusion_polygon_points(coords : Vector2i, polygon_points : Array[PackedVector2Array]) -> void:
-	_tiles[coords][_TileKeys.OCCLUSION_POLYGONS] = polygon_points
-
-func get_occlusion_polygons(coords : Vector2i) -> Array[PackedVector2Array]:
-	return _tiles[coords][_TileKeys.OCCLUSION_POLYGONS]
-
+func get_occluder(coords : Vector2i) -> OccluderPolygon2D:
+	return _tiles[coords][_TileKeys.OCCLUSION]
 
 
 func get_bit_color(coords : Vector2i, bit : TerrainBits) -> Color:
@@ -220,7 +212,7 @@ func _add_tile(coords : Vector2i, terrain_index := NULL_TERRAIN_INDEX, probabili
 		_TileKeys.PEERING_BITS: {},
 		_TileKeys.PROBABILITY: probability,
 		_TileKeys.COLLISION_POLYGONS: [],
-		_TileKeys.OCCLUSION_POLYGONS: [],
+		_TileKeys.OCCLUSION: null,
 	}
 
 
@@ -260,7 +252,7 @@ func clear_tile_terrains(coords : Vector2i) -> void:
 	_clear_tile_peering_bits(coords)
 	_clear_tile_probability(coords)
 	_clear_tile_collision_polygons(coords)
-	_clear_tile_occlusion_polygons(coords)
+	_clear_tile_occlusion(coords)
 
 
 func replace_all_tile_terrains(old_terrain_index : int, new_terrain_index : int) -> void:
@@ -291,5 +283,5 @@ func _clear_tile_probability(coords : Vector2i) -> void:
 func _clear_tile_collision_polygons(coords : Vector2i) -> void:
 	_tiles[coords][_TileKeys.COLLISION_POLYGONS].clear()
 
-func _clear_tile_occlusion_polygons(coords : Vector2i) -> void:
-	_tiles[coords][_TileKeys.OCCLUSION_POLYGONS].clear()
+func _clear_tile_occlusion(coords : Vector2i) -> void:
+	_tiles[coords][_TileKeys.OCCLUSION] = null

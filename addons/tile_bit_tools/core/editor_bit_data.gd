@@ -50,7 +50,7 @@ func apply_template_bit_data(template_bit_data : TemplateBitData, p_terrain_set 
 			set_bit_terrain(coords, bit, terrain_index)
 		set_tile_probability(coords, template_bit_data.get_tile_probability(template_coords))
 		set_collision_polygon_points(coords, template_bit_data.get_collision_polygons(template_coords))
-		set_occlusion_polygon_points(coords, template_bit_data.get_occlusion_polygons(template_coords))
+		set_occluder(coords, template_bit_data.get_occluder(template_coords))
 
 	return G.Errors.OK
 
@@ -126,4 +126,4 @@ func _load_terrain(coords : Vector2i, tile_data : TileData) -> void:
 
 	set_tile_probability(coords, tile_data.probability)
 	set_collision_polygon_points(coords, extract_collision_polygon_points(tile_data))
-	set_occlusion_polygon_points(coords, extract_occlusion_polygon_points(tile_data))
+	set_occluder(coords, tile_data.get_occluder(0))
