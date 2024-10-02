@@ -10,3 +10,4 @@ func on_reference_updated():
 	self.global_transform = reference.global_transform
 	self.tile_set = reference.tile_set
 	self.tile_map_data = reference.tile_map_data
+	self.collision_enabled = false
