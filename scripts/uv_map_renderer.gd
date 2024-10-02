@@ -6,6 +6,7 @@ const MASK_MATERIAL: Material = preload("res://resources/shaders/all_white.tres"
 @export var map: Map
 @export var camera: MapBoundedFollowCamera
 
+@export_group("Lights")
 ## Light components are used to generate lights, which
 ## cut holes through the overlay (via the mask).
 @export var lights: Array[LightComponent] = []
@@ -13,19 +14,26 @@ const MASK_MATERIAL: Material = preload("res://resources/shaders/all_white.tres"
 ## Additional non-map occluders which are added to the mask layer.
 @export var occluders: Array[LightOccluder2D] = []
 
+@export_group("Overlay")
 ## Sprites which should appear on the map overlay.
 @export var overlay_sprites: Array[Sprite2D] = []
+
+## How bright the overlay should appear compared to the original
+## 0.0 = completely black, 1.0 = same as original
+@export_range(0.1, 1.0, 0.05) var overlay_brightness := 0.5
 
 ## The overlay is the faded portion of the map which is displayed
 ## over top of everything else when no there is no vision.
 @onready var overlay: SubViewport = $Overlay
+
+@export_group("Mask")
 ## The mask "cuts a hole" through the overlay (using lights)
 ## in order to reveal the real map below it.
 @onready var mask: SubViewport = $Mask
 
 @onready var render: Sprite2D = $Render
 
-@export var show_debug_mask := true
+@export var show_debug_display := false
 @onready var mask_debug_display: Sprite2D = $"Mask Debug Display"
 #endregion
 
@@ -34,9 +42,7 @@ const MASK_MATERIAL: Material = preload("res://resources/shaders/all_white.tres"
 
 #region Engine Functions
 func _ready() -> void:
-	assert(map)
-	assert(camera)
-	assert(len(lights) > 0)
+	assert(map and camera)
 
 	overlay.add_child(UVMapCamera.new(camera))
 	mask.add_child(UVMapCamera.new(camera))
@@ -56,7 +62,7 @@ func _ready() -> void:
 
 	render.offset = camera.screen_center()
 	mask_debug_display.offset = camera.screen_center()
-	mask_debug_display.visible = show_debug_mask
+	mask_debug_display.visible = show_debug_display
 	self.show()
 #endregion
 
@@ -65,7 +71,7 @@ func _ready() -> void:
 
 #region Private Functions
 func as_overlay(node):
-	node.modulate.v = 0.2
+	node.modulate.v = overlay_brightness
 	return node
 
 func as_mask(node):
