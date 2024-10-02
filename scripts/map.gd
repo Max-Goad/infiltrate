@@ -1,3 +1,4 @@
+@tool
 class_name Map extends Node2D
 
 #region Variables
@@ -38,6 +39,9 @@ func get_tile_size() -> Vector2i:
 		else:
 			assert(tileset == layer.tile_set)
 	return tileset.tile_size
+
+func get_final_size() -> Vector2:
+	return Vector2(get_bounds().size) * Vector2(get_tile_size()) * get_map_scale()
 #endregion
 
 #region Private Functions

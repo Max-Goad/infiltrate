@@ -1,3 +1,4 @@
+@tool
 class_name UVMapRenderer extends Node2D
 
 const MASK_MATERIAL: Material = preload("res://resources/shaders/all_white.tres")
@@ -5,6 +6,9 @@ const MASK_MATERIAL: Material = preload("res://resources/shaders/all_white.tres"
 #region Variables
 @export var map: Map
 @export var camera: MapBoundedFollowCamera
+
+## The sprite used to display the final mask to the screen
+@onready var render: Sprite2D = $Render
 
 @export_group("Lights")
 ## Light components are used to generate lights, which
@@ -26,15 +30,23 @@ const MASK_MATERIAL: Material = preload("res://resources/shaders/all_white.tres"
 ## over top of everything else when no there is no vision.
 @onready var overlay: SubViewport = $Overlay
 
+## The toggleable simulated "dim" overlay used to test out the
+## approximate darkness of the overlay while still in editor.
+@onready var editor_overlay: ColorRect = $"Editor Overlay"
+@export var show_editor_overlay := false:
+	set(value):
+		show_editor_overlay = value
+		_update_editor_overlay()
+
 @export_group("Mask")
 ## The mask "cuts a hole" through the overlay (using lights)
 ## in order to reveal the real map below it.
 @onready var mask: SubViewport = $Mask
 
-@onready var render: Sprite2D = $Render
-
-@export var show_debug_display := false
+## The toggleable visual of the mask SubViewport,
+## shown in the top corner for debug purposes.
 @onready var mask_debug_display: Sprite2D = $"Mask Debug Display"
+@export var show_debug_display := false
 #endregion
 
 #region Signals
@@ -42,6 +54,10 @@ const MASK_MATERIAL: Material = preload("res://resources/shaders/all_white.tres"
 
 #region Engine Functions
 func _ready() -> void:
+	_update_editor_overlay()
+	if Engine.is_editor_hint():
+		return
+
 	assert(map and camera)
 
 	overlay.add_child(UVMapCamera.new(camera))
@@ -67,9 +83,6 @@ func _ready() -> void:
 #endregion
 
 #region Public Functions
-#endregion
-
-#region Private Functions
 func as_overlay(node):
 	node.modulate.v = overlay_brightness
 	return node
@@ -77,4 +90,17 @@ func as_overlay(node):
 func as_mask(node):
 	node.material = MASK_MATERIAL
 	return node
+#endregion
+
+#region Private Functions
+func _update_editor_overlay():
+	if not Engine.is_editor_hint() or not map or not show_editor_overlay:
+		if editor_overlay:
+			editor_overlay.hide()
+		return
+	editor_overlay.global_position = map.global_position
+	print(map.get_bounds())
+	editor_overlay.set_size(map.get_final_size())
+	editor_overlay.color = Color(Color.BLACK, 1.0-overlay_brightness)
+	editor_overlay.show()
 #endregion

@@ -20,6 +20,11 @@ viewport_path = NodePath("Mask")
 [node name="MapRenderer" type="Node2D"]
 script = ExtResource("1_1u0w6")
 
+[node name="Editor Overlay" type="ColorRect" parent="."]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+
 [node name="Render" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_qu4h7")
 texture = SubResource("ViewportTexture_hnuol")
