@@ -82,6 +82,8 @@ func _ready() -> void:
 	self.show()
 
 func _process(_delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
 	self.global_position = camera.global_top_left()
 #endregion
 
