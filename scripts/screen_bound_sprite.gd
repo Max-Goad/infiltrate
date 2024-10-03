@@ -1,11 +1,10 @@
-class_name ScreenBoundSprite extends Node2D
+class_name ScreenBoundSprite extends Sprite2D
 
 #region Variables
 @export var camera: MapBoundedFollowCamera
-@onready var sprite: Sprite2D = $Sprite2D
+@export var reference: Sprite2D
 
-@export var hide_on_screen := false
-@export var close_distance := 100
+@export var close_distance := 300
 @export var far_distance := 1000
 @export_range(0.1, 1.0, 0.1) var max_size := 1.0
 @export_range(0.1, 1.0, 0.1) var min_size := 0.1
@@ -16,31 +15,31 @@ class_name ScreenBoundSprite extends Node2D
 
 #region Engine Functions
 func _ready() -> void:
-	assert(camera)
+	assert(camera and reference)
 	assert(min_size <= max_size)
+	self.self_modulate = reference.modulate
+	add_child(reference.duplicate())
 
 func _process(_delta: float) -> void:
-	var bounds := camera.get_viewport_rect().grow_individual(-20, -14, -20, -14)
-	bounds.position = camera.bounded_position()
-	var on_screen = bounds.has_point(global_position)
+	const buffer = 20
+	var bounds := camera.get_viewport_rect().grow(-buffer)
+	bounds.position = camera.bounded_position() + Vector2(buffer, buffer)
+	var on_screen = bounds.has_point(reference.global_position)
 	if on_screen:
-		sprite.global_position = global_position
-		sprite.scale = Vector2(max_size, max_size)
-		visible = not hide_on_screen
+		self.hide()
 	else:
-		sprite.global_position = global_position.clamp(bounds.position, bounds.end)
-		print("pos: %s - %s - %s" % [global_position, sprite.global_position, bounds])
-		sprite.scale = _get_scale_by_distance()
-		visible = true
+		global_position = reference.global_position.clamp(bounds.position, bounds.end)
+		global_scale = _get_scale_by_distance(reference.global_position)
+		self.show()
 #endregion
 
 #region Public Functions
 #endregion
 
 #region Private Functions
-func _get_scale_by_distance() -> Vector2:
-	var distance = camera.get_screen_center_position().distance_to(global_position)
-	var percent = (distance - close_distance) / (far_distance - close_distance)
+func _get_scale_by_distance(target: Vector2) -> Vector2:
+	var distance = camera.get_screen_center_position().distance_to(target)
+	var percent = clamp((distance - close_distance) / (far_distance - close_distance), 0.0, 1.0)
 	var new_scale = (max_size - min_size) * (1.0-percent) + min_size
 	print({"distance" : distance, "percent" : percent, "new_scale" : new_scale})
 	return Vector2(new_scale, new_scale)
