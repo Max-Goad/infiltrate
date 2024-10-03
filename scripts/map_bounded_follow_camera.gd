@@ -28,12 +28,17 @@ func _process(_delta: float) -> void:
 			_update_rotation()
 			_update_bound()
 		scene_camera.position = follow.position
+		force_update_scroll()
+		#force_update_transform()
 #endregion
 
 #region Public Functions
 func update_map(map: Map):
 	self.map = map
 	_update_bound()
+
+func bounded_position() -> Vector2:
+	return get_screen_center_position() - screen_center()
 
 func screen_center() -> Vector2:
 	return get_window().size / 2
