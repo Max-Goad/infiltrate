@@ -37,10 +37,13 @@ func update_map(map: Map):
 	self.map = map
 	_update_bound()
 
-func bounded_position() -> Vector2:
-	return get_screen_center_position() - screen_center()
+func global_center() -> Vector2:
+	return get_screen_center_position()
 
-func screen_center() -> Vector2:
+func global_top_left() -> Vector2:
+	return global_center() - window_center()
+
+func window_center() -> Vector2:
 	return get_window().size / 2
 #endregion
 

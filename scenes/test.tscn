@@ -106,6 +106,20 @@ position = Vector2(920, 870)
 scale = Vector2(4, 4)
 shape = SubResource("RectangleShape2D_d7vq2")
 
+[node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("map", "follow")]
+script = ExtResource("9_36oxv")
+map = NodePath("../Map")
+follow = NodePath("../Player")
+
+[node name="UVMapRenderer" parent="." node_paths=PackedStringArray("map", "camera", "lights", "occluders", "overlay_sprites") instance=ExtResource("2_23s2m")]
+texture_filter = 2
+map = NodePath("../Map")
+camera = NodePath("../Camera2D")
+lights = [NodePath("../Player/LightComponent"), NodePath("../Test Static Light/LightComponent")]
+occluders = [NodePath("../Test Light Occluder/LightOccluder2D")]
+overlay_sprites = [NodePath("../Test Visible Object"), NodePath("../Test Light Occluder/Sprite")]
+show_editor_overlay = true
+
 [node name="Player" type="CharacterBody2D" parent="."]
 texture_filter = 1
 position = Vector2(198, 560)
@@ -130,25 +144,9 @@ deceleration = 0.1
 [node name="LightComponent" type="Node2D" parent="Player"]
 script = ExtResource("7_8fgcr")
 
-[node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("map", "follow")]
-script = ExtResource("9_36oxv")
-map = NodePath("../Map")
-follow = NodePath("../Player")
-
-[node name="Map Overlay Layer" type="CanvasLayer" parent="."]
-visible = false
-
-[node name="UVMapRenderer" parent="Map Overlay Layer" node_paths=PackedStringArray("map", "camera", "lights", "occluders", "overlay_sprites") instance=ExtResource("2_23s2m")]
-texture_filter = 2
-map = NodePath("../../Map")
-camera = NodePath("../../Camera2D")
-lights = [NodePath("../../Player/LightComponent"), NodePath("../../Test Static Light/LightComponent")]
-occluders = [NodePath("../../Test Light Occluder/LightOccluder2D")]
-overlay_sprites = [NodePath("../../Test Visible Object"), NodePath("../../Test Light Occluder/Sprite")]
-show_editor_overlay = true
-
 [node name="Notification" type="Node2D" parent="." node_paths=PackedStringArray("target")]
-position = Vector2(2020, 830)
+z_index = 10
+position = Vector2(1940, 760)
 script = ExtResource("5_eoaov")
 target = NodePath("../Player")
 
@@ -158,6 +156,7 @@ collide_with_areas = true
 script = ExtResource("5_s0x0e")
 
 [node name="Sprite" type="Sprite2D" parent="Notification"]
+modulate = Color(1, 0.52, 0.52, 1)
 scale = Vector2(1, 1)
 texture = ExtResource("12_5imh4")
 

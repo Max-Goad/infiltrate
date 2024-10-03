@@ -76,10 +76,13 @@ func _ready() -> void:
 	for occluder in occluders:
 		mask.add_child(as_mask(occluder.duplicate()))
 
-	render.offset = camera.screen_center()
-	mask_debug_display.offset = camera.screen_center()
+	render.offset = camera.window_center()
+	mask_debug_display.offset = camera.window_center()
 	mask_debug_display.visible = show_debug_display
 	self.show()
+
+func _process(_delta: float) -> void:
+	self.global_position = camera.global_top_left()
 #endregion
 
 #region Public Functions
