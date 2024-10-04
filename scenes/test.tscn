@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=4 uid="uid://sxhmb6wd0m4c"]
+[gd_scene load_steps=40 format=4 uid="uid://sxhmb6wd0m4c"]
 
 [ext_resource type="TileSet" uid="uid://blnhyh0sivvt8" path="res://resources/tilesets/test.tres" id="1_3taul"]
 [ext_resource type="Script" path="res://scripts/map.gd" id="1_bv3xe"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://sh3yljpf73t7" path="res://scenes/map_renderer.tscn" id="2_23s2m"]
 [ext_resource type="Script" path="res://scripts/notification.gd" id="5_eoaov"]
 [ext_resource type="Script" path="res://scripts/multi_collision_raycast.gd" id="5_s0x0e"]
+[ext_resource type="Script" path="res://scripts/camera_manager.gd" id="5_ttkk7"]
 [ext_resource type="Script" path="res://scripts/components/light_component.gd" id="7_8fgcr"]
 [ext_resource type="Script" path="res://scripts/screen_bound_sprite.gd" id="7_bodxp"]
 [ext_resource type="Texture2D" uid="uid://bo7u6g7m8o4ju" path="res://resources/art/dino/sheets/DinoSprites - doux.png" id="8_2pwip"]
@@ -228,32 +229,42 @@ position = Vector2(920, 870)
 scale = Vector2(4, 4)
 shape = SubResource("RectangleShape2D_d7vq2")
 
-[node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("map", "follow")]
-script = ExtResource("9_36oxv")
-map = NodePath("../Map")
-follow = NodePath("../Player")
+[node name="Camera Manager" type="Node" parent="."]
+script = ExtResource("5_ttkk7")
 
-[node name="UVMapRenderer" parent="." node_paths=PackedStringArray("map", "camera", "lights", "occluders", "overlay_sprites") instance=ExtResource("2_23s2m")]
+[node name="Player Camera" type="Camera2D" parent="Camera Manager" node_paths=PackedStringArray("map", "follow")]
+position = Vector2(640, 360)
+script = ExtResource("9_36oxv")
+map = NodePath("../../Map")
+follow = NodePath("../../Player")
+
+[node name="Test Camera" type="Camera2D" parent="Camera Manager" node_paths=PackedStringArray("map")]
+position = Vector2(1940, 760)
+script = ExtResource("9_36oxv")
+map = NodePath("../../Map")
+following = false
+
+[node name="UVMapRenderer" parent="." node_paths=PackedStringArray("map", "camera_manager", "lights", "occluders", "overlay_sprites") instance=ExtResource("2_23s2m")]
 texture_filter = 2
 map = NodePath("../Map")
-camera = NodePath("../Camera2D")
+camera_manager = NodePath("../Camera Manager")
 lights = [NodePath("../Player/LightComponent"), NodePath("../Test Static Light/LightComponent")]
 occluders = [NodePath("../Test Light Occluder/LightOccluder2D")]
 overlay_sprites = [NodePath("../Test Visible Object"), NodePath("../Test Light Occluder/Sprite")]
 show_editor_overlay = true
 
 [node name="Player" type="CharacterBody2D" parent="."]
-texture_filter = 1
 position = Vector2(198, 560)
 script = ExtResource("1_qruvv")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="Player"]
-texture_filter = 1
+texture_filter = 3
 scale = Vector2(3, 3)
 sprite_frames = SubResource("SpriteFrames_6hhut")
-animation = &"idle"
+animation = &"run"
 autoplay = "idle"
-frame_progress = 0.921257
+frame = 3
+frame_progress = 0.691238
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
@@ -289,5 +300,7 @@ texture = ExtResource("12_5imh4")
 [node name="Noise Icon" type="Sprite2D" parent="Notification" node_paths=PackedStringArray("camera", "reference")]
 texture = ExtResource("13_gkv0c")
 script = ExtResource("7_bodxp")
-camera = NodePath("../../Camera2D")
+camera = NodePath("../../Camera Manager/Player Camera")
 reference = NodePath("../Sprite")
+
+[node name="UI" type="CanvasLayer" parent="."]

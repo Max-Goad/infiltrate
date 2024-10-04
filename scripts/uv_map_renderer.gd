@@ -5,7 +5,14 @@ const MASK_MATERIAL: Material = preload("res://resources/shaders/all_white.tres"
 
 #region Variables
 @export var map: Map
-@export var camera: MapBoundedFollowCamera
+@export var camera_manager: CameraManager
+
+## Mappings of original cameras to their UVMap counterparts.
+## Stored as a dict of { CameraID : UVMapCamera }.
+## This allows us to be able to quickly identify and switch
+## all cameras to the proper ones when a switch occurs.
+var overlay_cameras: Dictionary
+var mask_cameras: Dictionary
 
 ## The sprite used to display the final mask to the screen
 @onready var render: Sprite2D = $Render
@@ -58,13 +65,18 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 
-	assert(map and camera)
+	assert(map and camera_manager)
 
-	overlay.add_child(UVMapCamera.new(camera))
-	mask.add_child(UVMapCamera.new(camera))
+	camera_manager.camera_added.connect(_add_camera)
+	camera_manager.camera_removed.connect(_remove_camera)
+	camera_manager.camera_changed.connect(_change_camera)
+	for camera in camera_manager.cameras:
+		_add_camera(camera)
+
 	for ref_layer in map.layers:
 		overlay.add_child(as_overlay(UVMapLayer.new(ref_layer)))
 		mask.add_child(as_mask(UVMapLayer.new(ref_layer)))
+
 	for ref_comp in lights:
 		# Only add the lights to the mask; the actual lights will exist in the real map
 		mask.add_child(UVMapLight.generate(ref_comp))
@@ -76,15 +88,16 @@ func _ready() -> void:
 	for occluder in occluders:
 		mask.add_child(as_mask(occluder.duplicate()))
 
-	render.offset = camera.window_center()
-	mask_debug_display.offset = camera.window_center()
+	_update_render_positions()
 	mask_debug_display.visible = show_debug_display
 	self.show()
 
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
-	self.global_position = camera.global_top_left()
+	self.global_position = camera_manager.current().global_top_left()
+
+	_update_render_positions()
 #endregion
 
 #region Public Functions
@@ -98,6 +111,14 @@ func as_mask(node):
 #endregion
 
 #region Private Functions
+func _update_render_positions():
+	var current_camera = camera_manager.current()
+	overlay.size = Vector2(get_window().size) / current_camera.zoom
+	mask.size = Vector2(get_window().size) / current_camera.zoom
+	render.offset = current_camera.window_center()
+	mask_debug_display.offset = current_camera.window_center()
+	current_camera.force_update_scroll()
+
 func _update_editor_overlay():
 	if not Engine.is_editor_hint() or not map or not show_editor_overlay:
 		if editor_overlay:
@@ -108,4 +129,29 @@ func _update_editor_overlay():
 	editor_overlay.set_size(map.get_final_size())
 	editor_overlay.color = Color(Color.BLACK, 1.0-overlay_brightness)
 	editor_overlay.show()
+
+func _add_camera(camera: MapBoundedFollowCamera):
+	var overlay_camera = UVMapCamera.new(camera)
+	overlay_cameras[camera.get_instance_id()] = overlay_camera
+	overlay.add_child(overlay_camera)
+	var mask_camera = UVMapCamera.new(camera)
+	mask_cameras[camera.get_instance_id()] = mask_camera
+	mask.add_child(mask_camera)
+
+func _remove_camera(camera: MapBoundedFollowCamera):
+	var id = camera.get_instance_id()
+	assert(id in overlay_cameras)
+	assert(id in mask_cameras)
+	overlay_cameras[id].queue_free()
+	mask_cameras[id].queue_free()
+	overlay_cameras.erase(id)
+	mask_cameras.erase(id)
+
+func _change_camera(camera: MapBoundedFollowCamera):
+	var id = camera.get_instance_id()
+	assert(id in overlay_cameras)
+	assert(id in mask_cameras)
+	overlay_cameras[id].make_current()
+	mask_cameras[id].make_current()
+	_update_render_positions()
 #endregion

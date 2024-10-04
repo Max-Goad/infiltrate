@@ -16,6 +16,7 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	_process_acceleration()
+	_process_input()
 	_process_animation()
 	_process_deceleration()
 #endregion
@@ -32,6 +33,9 @@ func _process_acceleration():
 
 func _process_deceleration():
 	movement.decelerate()
+
+func _process_input():
+	pass
 
 func _process_animation():
 	if movement.moving():

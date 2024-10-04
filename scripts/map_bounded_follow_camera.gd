@@ -15,7 +15,7 @@ var rot_num = 0
 #region Engine Functions
 func _ready() -> void:
 	assert(map)
-	assert(follow)
+	assert(not following or follow)
 	self.ignore_rotation = false
 	_update_bound()
 
@@ -23,13 +23,13 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if following:
-		var scene_camera = get_viewport().get_camera_2d()
 		if _rotation_changed():
 			_update_rotation()
 			_update_bound()
-		scene_camera.position = follow.position
+		position = follow.position
 		force_update_scroll()
 		#force_update_transform()
+
 #endregion
 
 #region Public Functions
