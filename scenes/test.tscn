@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=4 uid="uid://sxhmb6wd0m4c"]
+[gd_scene load_steps=45 format=4 uid="uid://sxhmb6wd0m4c"]
 
 [ext_resource type="TileSet" uid="uid://blnhyh0sivvt8" path="res://resources/tilesets/test.tres" id="1_3taul"]
 [ext_resource type="Script" path="res://scripts/map.gd" id="1_bv3xe"]
@@ -13,8 +13,13 @@
 [ext_resource type="Texture2D" uid="uid://bo7u6g7m8o4ju" path="res://resources/art/dino/sheets/DinoSprites - doux.png" id="8_2pwip"]
 [ext_resource type="Texture2D" uid="uid://cmfcljg7o24ka" path="res://resources/art/Sprout Lands Pack/Objects/Items/All items.png" id="8_8p8fv"]
 [ext_resource type="Script" path="res://scripts/map_bounded_follow_camera.gd" id="9_36oxv"]
+[ext_resource type="Script" path="res://scripts/ability/ability_loadout.gd" id="11_t8jku"]
 [ext_resource type="Texture2D" uid="uid://dba2rgf25oykx" path="res://resources/art/icons/explosion.png" id="12_5imh4"]
 [ext_resource type="Texture2D" uid="uid://c0ck7mcwuprdl" path="res://resources/art/icons/target.png" id="13_gkv0c"]
+[ext_resource type="Texture2D" uid="uid://npoa5qfx6x8m" path="res://resources/art/icons/input/xbox/Button/A_dark_light.png" id="17_k3ss7"]
+[ext_resource type="Texture2D" uid="uid://cctry6aa3pq55" path="res://resources/art/icons/input/xbox/Button/B_dark_light.png" id="18_hiq7y"]
+[ext_resource type="Texture2D" uid="uid://b876tgewqcvr3" path="res://resources/art/icons/input/xbox/Button/X_dark_light.png" id="19_qy3pc"]
+[ext_resource type="Texture2D" uid="uid://bl4j2unhtbjr0" path="res://resources/art/icons/input/xbox/Button/Y_dark_light.png" id="20_wqaxf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_dl1rb"]
 atlas = ExtResource("8_8p8fv")
@@ -281,6 +286,9 @@ deceleration = 0.1
 [node name="LightComponent" type="Node2D" parent="Player"]
 script = ExtResource("7_8fgcr")
 
+[node name="AbilityLoadout" type="Node" parent="Player"]
+script = ExtResource("11_t8jku")
+
 [node name="Notification" type="Node2D" parent="." node_paths=PackedStringArray("target")]
 z_index = 10
 position = Vector2(1940, 760)
@@ -294,7 +302,6 @@ script = ExtResource("5_s0x0e")
 
 [node name="Sprite" type="Sprite2D" parent="Notification"]
 modulate = Color(1, 0.52, 0.52, 1)
-scale = Vector2(1, 1)
 texture = ExtResource("12_5imh4")
 
 [node name="Noise Icon" type="Sprite2D" parent="Notification" node_paths=PackedStringArray("camera", "reference")]
@@ -304,3 +311,48 @@ camera = NodePath("../../Camera Manager/Player Camera")
 reference = NodePath("../Sprite")
 
 [node name="UI" type="CanvasLayer" parent="."]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -230.0
+offset_top = -50.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Button Display" type="HBoxContainer" parent="UI/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="Button1" type="TextureRect" parent="UI/VBoxContainer/Button Display"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = ExtResource("17_k3ss7")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="Button2" type="TextureRect" parent="UI/VBoxContainer/Button Display"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = ExtResource("18_hiq7y")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="Button3" type="TextureRect" parent="UI/VBoxContainer/Button Display"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = ExtResource("19_qy3pc")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="Button4" type="TextureRect" parent="UI/VBoxContainer/Button Display"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = ExtResource("20_wqaxf")
+expand_mode = 1
+stretch_mode = 4
