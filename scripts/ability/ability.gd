@@ -13,8 +13,8 @@ var _chain_timer : ChainTimer
 #endregion
 
 #region Signals
-signal ability_complete
-signal cooldown_complete
+signal cooldown_initiated(time)
+signal cooldown_finished
 #endregion
 
 #region Engine Functions
@@ -41,6 +41,7 @@ func initiate_cooldown():
 	assert(_cooldown_timer.is_stopped())
 	_cooldown_timer.start(cooldown)
 	state = State.COOLDOWN
+	cooldown_initiated.emit(cooldown)
 
 func is_ready() -> bool:
 	return state == State.READY and _cooldown_timer.is_stopped()
@@ -72,7 +73,7 @@ func _setup_timers():
 
 func _on_cooldown_timeout():
 	state = State.READY
-	cooldown_complete.emit()
+	cooldown_finished.emit()
 #endregion
 
 enum ID {

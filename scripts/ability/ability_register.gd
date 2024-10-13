@@ -17,6 +17,8 @@ var current_loadout_id: int = NO_CURRENT_LOADOUT :
 signal loadout_changed(loadout)
 signal ability_pressed(slot_num)
 signal ability_released(slot_num)
+signal ability_cooldown_initiated(slot_num, time)
+signal ability_cooldown_finished(slot_num)
 #endregion
 
 #region Engine Functions
@@ -41,6 +43,7 @@ func register(loadout: AbilityLoadout) -> void:
 	var id = loadout.get_instance_id()
 	assert(id not in loadouts)
 	loadouts[id] = loadout
+	_connect_cooldown_callbacks(loadout)
 	if current_loadout_id == NO_CURRENT_LOADOUT:
 		make_current(loadout)
 
@@ -56,6 +59,9 @@ func unregister(loadout: AbilityLoadout) -> AbilityLoadout:
 
 func current_loadout() -> AbilityLoadout:
 	return loadouts[current_loadout_id]
+
+func is_current(loadout: AbilityLoadout) -> bool:
+	return loadout.get_instance_id() == current_loadout_id
 
 func make_current(loadout: AbilityLoadout):
 	print("AbilityRegister: make_current %s" % loadout)
@@ -103,4 +109,20 @@ func initiate_release(slot_num) -> bool:
 #endregion
 
 #region Private Functions
+func _connect_cooldown_callbacks(loadout: AbilityLoadout):
+	for i in range(AbilityLoadout.NUM_SLOTS):
+		if loadout.has_ability(i):
+			var ability := loadout.get_ability(i)
+			ability.cooldown_initiated.connect(_on_cooldown_initiated.bind(loadout, i))
+			ability.cooldown_finished.connect(_on_cooldown_finished.bind(loadout, i))
+
+func _on_cooldown_initiated(time: float, loadout: AbilityLoadout, slot_num: int):
+	if not is_current(loadout):
+		return
+	ability_cooldown_initiated.emit(slot_num, time)
+
+func _on_cooldown_finished(loadout: AbilityLoadout, slot_num: int):
+	if not is_current(loadout):
+		return
+	ability_cooldown_finished.emit(slot_num)
 #endregion

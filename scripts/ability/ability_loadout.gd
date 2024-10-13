@@ -19,9 +19,10 @@ var _abilities: Array[Ability] = []
 func _ready() -> void:
 	assert(movement)
 	_initialize_abilities()
+	AbilityRegister.register(self)
 
 func _enter_tree() -> void:
-	AbilityRegister.register(self)
+	pass
 
 func _exit_tree() -> void:
 	AbilityRegister.unregister(self)
