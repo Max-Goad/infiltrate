@@ -3,6 +3,7 @@ class_name Player extends CharacterBody2D
 #region Variables
 @onready var movement: CharacterMovementComponent = $CharacterMovementComponent
 @onready var sprite: AnimatedSprite2D = $Sprite
+@onready var loadout: AbilityLoadout = $AbilityLoadout
 
 var last_movement_direction := Vector2.RIGHT
 
@@ -14,8 +15,7 @@ var abilities: Array[Ability] = []
 
 #region Engine Functions
 func _ready() -> void:
-	#_setup_test_abilities()
-	pass
+	_register_loadout()
 
 func _process(_delta: float) -> void:
 	_process_acceleration()
@@ -46,4 +46,7 @@ func _process_animation():
 		sprite.flip_h = false
 	elif last_movement_direction.x < 0:
 		sprite.flip_h = true
+
+func _register_loadout():
+	pass
 #endregion

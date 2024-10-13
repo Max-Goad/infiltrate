@@ -19,6 +19,12 @@ var _abilities: Array[Ability] = []
 func _ready() -> void:
 	assert(movement)
 	_initialize_abilities()
+
+func _enter_tree() -> void:
+	AbilityRegister.register(self)
+
+func _exit_tree() -> void:
+	AbilityRegister.unregister(self)
 #endregion
 
 #region Public Functions
@@ -28,6 +34,9 @@ func has_ability(slot_num: int) -> bool:
 func get_ability(slot_num: int) -> Ability:
 	assert(has_ability(slot_num))
 	return _abilities[slot_num]
+
+func make_current():
+	AbilityRegister.make_current(self)
 #endregion
 
 #region Private Functions

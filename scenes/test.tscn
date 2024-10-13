@@ -1,8 +1,7 @@
-[gd_scene load_steps=51 format=4 uid="uid://sxhmb6wd0m4c"]
+[gd_scene load_steps=50 format=4 uid="uid://sxhmb6wd0m4c"]
 
 [ext_resource type="TileSet" uid="uid://blnhyh0sivvt8" path="res://resources/tilesets/test.tres" id="1_3taul"]
 [ext_resource type="Script" path="res://scripts/map.gd" id="1_bv3xe"]
-[ext_resource type="Script" path="res://scripts/ability/ability_register.gd" id="1_dkkq7"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_qruvv"]
 [ext_resource type="Script" path="res://scripts/components/character_movement_component.gd" id="2_7mp8f"]
 [ext_resource type="PackedScene" uid="uid://sh3yljpf73t7" path="res://scenes/map_renderer.tscn" id="2_23s2m"]
@@ -187,9 +186,6 @@ height = 60.0
 
 [node name="TestScene" type="Node2D"]
 
-[node name="AbilityRegister" type="Node" parent="."]
-script = ExtResource("1_dkkq7")
-
 [node name="Map" type="Node2D" parent="."]
 texture_filter = 1
 script = ExtResource("1_bv3xe")
@@ -298,6 +294,10 @@ script = ExtResource("7_8fgcr")
 [node name="AbilityLoadout" type="Node" parent="Player" node_paths=PackedStringArray("movement")]
 script = ExtResource("11_t8jku")
 movement = NodePath("../CharacterMovementComponent")
+slot_1_id = 1
+slot_2_id = 1
+slot_3_id = 1
+slot_4_id = 1
 
 [node name="Notification" type="Node2D" parent="." node_paths=PackedStringArray("target")]
 z_index = 10
