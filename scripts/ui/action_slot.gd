@@ -26,11 +26,11 @@ func _loadout_changed(loadout: AbilityLoadout):
 	_reset()
 
 func _cooldown_initiated(slot_num: int, time: float):
-	if slot_num != self.slot:
+	if slot_num+1 != self.slot:
 		return
 	timer.start(time)
 
 func _cooldown_finished(slot_num: int):
-	if slot_num != self.slot:
+	if slot_num+1 != self.slot:
 		return
 	_reset()

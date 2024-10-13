@@ -1,4 +1,4 @@
-[gd_scene load_steps=55 format=4 uid="uid://sxhmb6wd0m4c"]
+[gd_scene load_steps=51 format=4 uid="uid://sxhmb6wd0m4c"]
 
 [ext_resource type="TileSet" uid="uid://blnhyh0sivvt8" path="res://resources/tilesets/test.tres" id="1_3taul"]
 [ext_resource type="Script" path="res://scripts/map.gd" id="1_bv3xe"]
@@ -16,10 +16,9 @@
 [ext_resource type="Script" path="res://scripts/ability/ability_loadout.gd" id="11_t8jku"]
 [ext_resource type="Texture2D" uid="uid://dba2rgf25oykx" path="res://resources/art/icons/explosion.png" id="12_5imh4"]
 [ext_resource type="Texture2D" uid="uid://c0ck7mcwuprdl" path="res://resources/art/icons/target.png" id="13_gkv0c"]
+[ext_resource type="PackedScene" uid="uid://corwo5l4mb5v1" path="res://scenes/action_slot.tscn" id="17_f4rpl"]
 [ext_resource type="Texture2D" uid="uid://npoa5qfx6x8m" path="res://resources/art/icons/input/xbox/Button/A_dark_light.png" id="17_k3ss7"]
-[ext_resource type="Script" path="res://scripts/ui/action_slot.gd" id="17_m414x"]
 [ext_resource type="Texture2D" uid="uid://c6m4ds653yxbm" path="res://resources/art/icons/input/xbox/Button/A_dark_color.png" id="18_4rh87"]
-[ext_resource type="Texture2D" uid="uid://bi1dghmj0h5ba" path="res://resources/art/Sprout Lands Pack/Objects/Items/Egg items.png" id="18_h8af6"]
 [ext_resource type="Texture2D" uid="uid://cctry6aa3pq55" path="res://resources/art/icons/input/xbox/Button/B_dark_light.png" id="18_hiq7y"]
 [ext_resource type="Texture2D" uid="uid://b876tgewqcvr3" path="res://resources/art/icons/input/xbox/Button/X_dark_light.png" id="19_qy3pc"]
 [ext_resource type="Texture2D" uid="uid://b5yr2xxjd8pnp" path="res://resources/art/icons/input/xbox/Button/B_dark_color.png" id="20_66jdd"]
@@ -186,15 +185,6 @@ animations = [{
 radius = 22.0
 height = 60.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_gpblg"]
-atlas = ExtResource("18_h8af6")
-region = Rect2(0, 0, 16, 16)
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_w370p"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ps830"]
-bg_color = Color(0.15, 0.15, 0.15, 0.392157)
-
 [node name="TestScene" type="Node2D"]
 
 [node name="Map" type="Node2D" parent="."]
@@ -355,26 +345,9 @@ theme_override_constants/separation = 10
 [node name="VBoxContainer" type="VBoxContainer" parent="UI/MarginContainer/Button Display"]
 layout_mode = 2
 
-[node name="ActionSlot" type="PanelContainer" parent="UI/MarginContainer/Button Display/VBoxContainer"]
+[node name="ActionSlot" parent="UI/MarginContainer/Button Display/VBoxContainer" instance=ExtResource("17_f4rpl")]
 layout_mode = 2
-script = ExtResource("17_m414x")
-
-[node name="Texture" type="TextureRect" parent="UI/MarginContainer/Button Display/VBoxContainer/ActionSlot"]
-texture_filter = 1
-custom_minimum_size = Vector2(50, 50)
-layout_mode = 2
-texture = SubResource("AtlasTexture_gpblg")
-
-[node name="Cooldown" type="ProgressBar" parent="UI/MarginContainer/Button Display/VBoxContainer/ActionSlot"]
-layout_mode = 2
-size_flags_vertical = 1
-theme_override_styles/background = SubResource("StyleBoxEmpty_w370p")
-theme_override_styles/fill = SubResource("StyleBoxFlat_ps830")
-fill_mode = 2
-show_percentage = false
-
-[node name="Timer" type="Timer" parent="UI/MarginContainer/Button Display/VBoxContainer/ActionSlot"]
-one_shot = true
+slot = 1
 
 [node name="Button1" type="TextureButton" parent="UI/MarginContainer/Button Display/VBoxContainer"]
 custom_minimum_size = Vector2(50, 50)
@@ -394,12 +367,9 @@ action = &"player_action_1"
 [node name="VBoxContainer2" type="VBoxContainer" parent="UI/MarginContainer/Button Display"]
 layout_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="UI/MarginContainer/Button Display/VBoxContainer2"]
+[node name="ActionSlot" parent="UI/MarginContainer/Button Display/VBoxContainer2" instance=ExtResource("17_f4rpl")]
 layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="UI/MarginContainer/Button Display/VBoxContainer2/PanelContainer"]
-custom_minimum_size = Vector2(50, 50)
-layout_mode = 2
+slot = 2
 
 [node name="Button2" type="TextureButton" parent="UI/MarginContainer/Button Display/VBoxContainer2"]
 custom_minimum_size = Vector2(50, 50)
@@ -419,13 +389,6 @@ action = &"player_action_2"
 [node name="VBoxContainer3" type="VBoxContainer" parent="UI/MarginContainer/Button Display"]
 layout_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="UI/MarginContainer/Button Display/VBoxContainer3"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="UI/MarginContainer/Button Display/VBoxContainer3/PanelContainer"]
-custom_minimum_size = Vector2(50, 50)
-layout_mode = 2
-
 [node name="Button3" type="TextureButton" parent="UI/MarginContainer/Button Display/VBoxContainer3"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
@@ -441,14 +404,11 @@ stretch_mode = 4
 script = ExtResource("20_74qf6")
 action = &"player_action_3"
 
+[node name="ActionSlot" parent="UI/MarginContainer/Button Display/VBoxContainer3" instance=ExtResource("17_f4rpl")]
+layout_mode = 2
+slot = 3
+
 [node name="VBoxContainer4" type="VBoxContainer" parent="UI/MarginContainer/Button Display"]
-layout_mode = 2
-
-[node name="PanelContainer" type="PanelContainer" parent="UI/MarginContainer/Button Display/VBoxContainer4"]
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="UI/MarginContainer/Button Display/VBoxContainer4/PanelContainer"]
-custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 
 [node name="Button4" type="TextureButton" parent="UI/MarginContainer/Button Display/VBoxContainer4"]
@@ -465,3 +425,7 @@ ignore_texture_size = true
 stretch_mode = 4
 script = ExtResource("20_74qf6")
 action = &"player_action_4"
+
+[node name="ActionSlot" parent="UI/MarginContainer/Button Display/VBoxContainer4" instance=ExtResource("17_f4rpl")]
+layout_mode = 2
+slot = 4

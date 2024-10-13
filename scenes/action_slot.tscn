@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=3 uid="uid://corwo5l4mb5v1"]
+
+[ext_resource type="Script" path="res://scripts/ui/action_slot.gd" id="1_ebcfj"]
+[ext_resource type="Texture2D" uid="uid://bi1dghmj0h5ba" path="res://resources/art/Sprout Lands Pack/Objects/Items/Egg items.png" id="2_4i13d"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gpblg"]
+atlas = ExtResource("2_4i13d")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_w370p"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ps830"]
+bg_color = Color(0.15, 0.15, 0.15, 0.392157)
+
+[node name="ActionSlot" type="PanelContainer"]
+script = ExtResource("1_ebcfj")
+
+[node name="Texture" type="TextureRect" parent="."]
+texture_filter = 1
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = SubResource("AtlasTexture_gpblg")
+
+[node name="Cooldown" type="ProgressBar" parent="."]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_styles/background = SubResource("StyleBoxEmpty_w370p")
+theme_override_styles/fill = SubResource("StyleBoxFlat_ps830")
+fill_mode = 2
+show_percentage = false
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true

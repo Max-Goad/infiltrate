@@ -8,7 +8,7 @@ class_name DashAbility extends Ability
 
 #region Engine Functions
 func _init(movement: MovementComponent) -> void:
-	super._init(movement)
+	super._init(movement, 3.0)
 #endregion
 
 #region Public Functions
