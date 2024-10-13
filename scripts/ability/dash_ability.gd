@@ -7,16 +7,17 @@ class_name DashAbility extends Ability
 #endregion
 
 #region Engine Functions
-func _init() -> void:
-	super._init()
+func _init(movement: MovementComponent) -> void:
+	super._init(movement)
 #endregion
 
 #region Public Functions
-func on_start():
-	self.parent.movement.lock_until_stopped()
-	self.parent.movement.accelerate(6.0, MovementComponent.IGNORE_LOCK)
+func on_press():
+	self.movement.lock_until_stopped()
+	self.movement.accelerate(6.0, MovementComponent.IGNORE_LOCK)
+	self.initiate_cooldown()
 
-func on_end():
+func on_release():
 	pass
 #endregion
 

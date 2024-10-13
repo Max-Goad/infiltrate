@@ -21,8 +21,9 @@ func _ready() -> void:
 	pass
 
 func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed("player_action_2"):
-		trigger()
+	#if Input.is_action_just_pressed("player_action_2"):
+	#	trigger()
+	pass
 #endregion
 
 #region Public Functions

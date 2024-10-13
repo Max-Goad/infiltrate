@@ -1,7 +1,8 @@
-[gd_scene load_steps=57 format=4 uid="uid://sxhmb6wd0m4c"]
+[gd_scene load_steps=51 format=4 uid="uid://sxhmb6wd0m4c"]
 
 [ext_resource type="TileSet" uid="uid://blnhyh0sivvt8" path="res://resources/tilesets/test.tres" id="1_3taul"]
 [ext_resource type="Script" path="res://scripts/map.gd" id="1_bv3xe"]
+[ext_resource type="Script" path="res://scripts/ability/ability_register.gd" id="1_dkkq7"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_qruvv"]
 [ext_resource type="Script" path="res://scripts/components/character_movement_component.gd" id="2_7mp8f"]
 [ext_resource type="PackedScene" uid="uid://sh3yljpf73t7" path="res://scenes/map_renderer.tscn" id="2_23s2m"]
@@ -21,6 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://cctry6aa3pq55" path="res://resources/art/icons/input/xbox/Button/B_dark_light.png" id="18_hiq7y"]
 [ext_resource type="Texture2D" uid="uid://b876tgewqcvr3" path="res://resources/art/icons/input/xbox/Button/X_dark_light.png" id="19_qy3pc"]
 [ext_resource type="Texture2D" uid="uid://b5yr2xxjd8pnp" path="res://resources/art/icons/input/xbox/Button/B_dark_color.png" id="20_66jdd"]
+[ext_resource type="Script" path="res://scripts/ui/action_display_button.gd" id="20_74qf6"]
 [ext_resource type="Texture2D" uid="uid://bl4j2unhtbjr0" path="res://resources/art/icons/input/xbox/Button/Y_dark_light.png" id="20_wqaxf"]
 [ext_resource type="Texture2D" uid="uid://c10mni42nmbi4" path="res://resources/art/icons/input/xbox/Button/X_dark_color.png" id="22_wiofl"]
 [ext_resource type="Texture2D" uid="uid://cpfqhau4olqfv" path="res://resources/art/icons/input/xbox/Button/Y_dark_color.png" id="24_3g0x6"]
@@ -183,35 +185,10 @@ animations = [{
 radius = 22.0
 height = 60.0
 
-[sub_resource type="InputEventAction" id="InputEventAction_77lp2"]
-action = &"player_action_1"
-pressed = true
-
-[sub_resource type="Shortcut" id="Shortcut_oayga"]
-events = [SubResource("InputEventAction_77lp2")]
-
-[sub_resource type="InputEventAction" id="InputEventAction_5sfd7"]
-action = &"player_action_2"
-pressed = true
-
-[sub_resource type="Shortcut" id="Shortcut_dna2x"]
-events = [SubResource("InputEventAction_5sfd7")]
-
-[sub_resource type="InputEventAction" id="InputEventAction_glt2g"]
-action = &"player_action_3"
-pressed = true
-
-[sub_resource type="Shortcut" id="Shortcut_5cp42"]
-events = [SubResource("InputEventAction_glt2g")]
-
-[sub_resource type="InputEventAction" id="InputEventAction_mfwcx"]
-action = &"player_action_4"
-pressed = true
-
-[sub_resource type="Shortcut" id="Shortcut_84wo1"]
-events = [SubResource("InputEventAction_mfwcx")]
-
 [node name="TestScene" type="Node2D"]
+
+[node name="AbilityRegister" type="Node" parent="."]
+script = ExtResource("1_dkkq7")
 
 [node name="Map" type="Node2D" parent="."]
 texture_filter = 1
@@ -318,8 +295,9 @@ deceleration = 0.1
 [node name="LightComponent" type="Node2D" parent="Player"]
 script = ExtResource("7_8fgcr")
 
-[node name="AbilityLoadout" type="Node" parent="Player"]
+[node name="AbilityLoadout" type="Node" parent="Player" node_paths=PackedStringArray("movement")]
 script = ExtResource("11_t8jku")
+movement = NodePath("../CharacterMovementComponent")
 
 [node name="Notification" type="Node2D" parent="." node_paths=PackedStringArray("target")]
 z_index = 10
@@ -364,8 +342,8 @@ theme_override_constants/separation = 10
 [node name="Button1" type="TextureButton" parent="UI/VBoxContainer/Button Display"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
+toggle_mode = true
 button_mask = 0
-shortcut = SubResource("Shortcut_oayga")
 texture_normal = ExtResource("17_k3ss7")
 texture_pressed = ExtResource("18_4rh87")
 texture_hover = ExtResource("17_k3ss7")
@@ -373,12 +351,14 @@ texture_disabled = ExtResource("17_k3ss7")
 texture_focused = ExtResource("17_k3ss7")
 ignore_texture_size = true
 stretch_mode = 4
+script = ExtResource("20_74qf6")
+action = &"player_action_1"
 
 [node name="Button2" type="TextureButton" parent="UI/VBoxContainer/Button Display"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
+toggle_mode = true
 button_mask = 0
-shortcut = SubResource("Shortcut_dna2x")
 texture_normal = ExtResource("18_hiq7y")
 texture_pressed = ExtResource("20_66jdd")
 texture_hover = ExtResource("18_hiq7y")
@@ -386,12 +366,14 @@ texture_disabled = ExtResource("18_hiq7y")
 texture_focused = ExtResource("18_hiq7y")
 ignore_texture_size = true
 stretch_mode = 4
+script = ExtResource("20_74qf6")
+action = &"player_action_2"
 
 [node name="Button3" type="TextureButton" parent="UI/VBoxContainer/Button Display"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
+toggle_mode = true
 button_mask = 0
-shortcut = SubResource("Shortcut_5cp42")
 texture_normal = ExtResource("19_qy3pc")
 texture_pressed = ExtResource("22_wiofl")
 texture_hover = ExtResource("19_qy3pc")
@@ -399,12 +381,14 @@ texture_disabled = ExtResource("19_qy3pc")
 texture_focused = ExtResource("19_qy3pc")
 ignore_texture_size = true
 stretch_mode = 4
+script = ExtResource("20_74qf6")
+action = &"player_action_3"
 
 [node name="Button4" type="TextureButton" parent="UI/VBoxContainer/Button Display"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
+toggle_mode = true
 button_mask = 0
-shortcut = SubResource("Shortcut_84wo1")
 texture_normal = ExtResource("20_wqaxf")
 texture_pressed = ExtResource("24_3g0x6")
 texture_hover = ExtResource("20_wqaxf")
@@ -412,3 +396,5 @@ texture_disabled = ExtResource("20_wqaxf")
 texture_focused = ExtResource("20_wqaxf")
 ignore_texture_size = true
 stretch_mode = 4
+script = ExtResource("20_74qf6")
+action = &"player_action_4"

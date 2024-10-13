@@ -15,10 +15,11 @@ func _ready() -> void:
 	_collect_cameras()
 
 func _process(delta: float) -> void:
-	if Input.is_action_just_pressed("player_action_3"):
-		change_to_camera(cameras[0])
-	elif Input.is_action_just_pressed("player_action_4"):
-		change_to_camera(cameras[1])
+	#if Input.is_action_just_pressed("player_action_3"):
+	#	change_to_camera(cameras[0])
+	#elif Input.is_action_just_pressed("player_action_4"):
+	#	change_to_camera(cameras[1])
+	pass
 #endregion
 
 #region Public Functions

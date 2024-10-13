@@ -1,16 +1,14 @@
 class_name Ability extends Node
 
-#region Variables
-var cooldown: float
-var delay_callable: Callable = func(): pass
+enum State { READY = 0, PRESSED, COOLDOWN }
 
-## Start Variables
-var parent: Player
-var direction: Vector2
+#region Variables
+var movement: MovementComponent
+var cooldown: float
+var state: State = State.READY
 
 ## Timers
 var _cooldown_timer: Timer
-var _delay_timer: Timer
 var _chain_timer : ChainTimer
 #endregion
 
@@ -20,40 +18,45 @@ signal cooldown_complete
 #endregion
 
 #region Engine Functions
-func _init(cooldown = 0.0) -> void:
+func _init(movement: MovementComponent, cooldown = 0.0) -> void:
+	self.movement = movement
 	self.cooldown = cooldown
 	_setup_timers()
 #endregion
 
 #region Public Functions
-func start(parent: Player, direction: Vector2):
-	self.parent = parent
-	self.direction = direction
-	assert(_cooldown_timer.is_stopped())
-	_cooldown_timer.start(cooldown)
-	on_start()
+func press():
+	on_press()
+	state = State.PRESSED
 
-func start_after_delay(fn: Callable, delay: float):
-	assert(delay > 0.0)
-	assert(_delay_timer.is_stopped())
-	delay_callable = fn
-	_delay_timer.start(delay)
+func release():
+	on_release()
+	if _cooldown_timer.is_stopped():
+		initiate_cooldown()
 
 func chain() -> ChainTimer:
 	return _chain_timer
 
-func end():
-	on_end()
+func initiate_cooldown():
+	assert(_cooldown_timer.is_stopped())
+	_cooldown_timer.start(cooldown)
+	state = State.COOLDOWN
 
 func is_ready() -> bool:
-	return _cooldown_timer.is_stopped()
+	return state == State.READY and _cooldown_timer.is_stopped()
+
+func is_pressed() -> bool:
+	return state == State.PRESSED and _cooldown_timer.is_stopped()
+
+func is_in_cooldown() -> bool:
+	return state == State.COOLDOWN and not _cooldown_timer.is_stopped()
 #endregion
 
 #region Abstract Functions
-func on_start():
+func on_press():
 	assert(false, "Ability failed to override base class")
 
-func on_end():
+func on_release():
 	assert(false, "Ability failed to override base class")
 #endregion
 
@@ -61,16 +64,15 @@ func on_end():
 func _setup_timers():
 	_cooldown_timer = Timer.new()
 	_cooldown_timer.one_shot = true
-	_cooldown_timer.timeout.connect(func(): cooldown_complete.emit())
+	_cooldown_timer.timeout.connect(_on_cooldown_timeout)
 	add_child(_cooldown_timer)
-
-	_delay_timer = Timer.new()
-	_delay_timer.one_shot = true
-	_delay_timer.timeout.connect(func(): delay_callable.call())
-	add_child(_delay_timer)
 
 	_chain_timer = ChainTimer.new()
 	add_child(_chain_timer)
+
+func _on_cooldown_timeout():
+	state = State.READY
+	cooldown_complete.emit()
 #endregion
 
 enum ID {
@@ -78,11 +80,11 @@ enum ID {
 	DASH = 1,
 }
 
-static func new_from_id(id: Ability.ID) -> Ability:
+static func new_from_id(id: Ability.ID, movement: MovementComponent) -> Ability:
 	match id:
 		ID.NULL:
 			return NullAbility.new()
 		ID.DASH:
-			return DashAbility.new()
+			return DashAbility.new(movement)
 	assert(false, "unreachable")
 	return NullAbility.new()

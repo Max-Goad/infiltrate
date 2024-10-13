@@ -8,7 +8,7 @@ class_name NullAbility extends Ability
 
 #region Engine Functions
 func _init() -> void:
-	super._init()
+	super._init(MovementComponent.new())
 #endregion
 
 #region Public Functions
